@@ -4,8 +4,9 @@
 
 ## 说明
 改自
-https://github.com/corestudi0/corestudi0.github.io/tree/main/newyear
-https://juejin.cn/post/6958998979023470628
+
++ [整体](https://github.com/corestudi0/corestudi0.github.io/tree/main/newyear)
++ [文字](https://juejin.cn/post/6958998979023470628)
 ## 计划
 
 TODO

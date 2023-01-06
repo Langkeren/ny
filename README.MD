@@ -1,2 +1,3 @@
-改自源码http://20it.cn/a1023461
-烟火来自https://github.com/NianBroken/Firework_Simulator
+改自
+https://github.com/corestudi0/corestudi0.github.io/tree/main/newyear
+https://juejin.cn/post/6958998979023470628

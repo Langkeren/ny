@@ -2055,6 +2055,8 @@ class Shell {
             const myEffect = myEffectList[Math.random() * myEffectList.length | 0]
             if (userClickCount === 1 && hasText){
                 onDeath = textEffect
+            }else if (userClickCount === 2 && hasImg){
+                onDeath = imgEffect
             }else if (userClickCount < 3){
                 onDeath = myEffect;
             }else if (Math.random() > 0.5){

@@ -1010,7 +1010,7 @@ function createFireworks(x, y,text="") {
                 randomColor(),
                 Math.atan2( tw, th),
                 tr / 20,
-                startLive
+                startLive + Math.random() * startLive
             );
             if (Math.random() > 0.5){
                 comet.onDeath = onDeath

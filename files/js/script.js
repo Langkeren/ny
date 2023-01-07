@@ -920,21 +920,55 @@ function init() {
     // Apply initial config
     configDidUpdate();
 
-    initTextCanvas();
+    initCustom();
 }
 
 
 var textCanvas
 var textctx
-function initTextCanvas(){
+var imgCanvas
+var imgCtx
+var hasText = false
+var hasImg = false
+function initCustom(){
     textCanvas = document.createElement("canvas");
     textCanvas.width=1000;
     textCanvas.height=300;
     textctx = textCanvas.getContext("2d");
     textctx.fillStyle = "#000000";
     textctx.fillRect(0,0,textCanvas.width,textCanvas.height);
+
+    const imgUrl = getImgUrl()
+    hasText = !!(getText())
+    if (imgUrl){
+        const img = document.getElementById("myImage");
+        img.crossOrigin = "anonymous";
+        img.src = imgUrl
+        img.onload = ()=>{
+            imgCanvas = document.createElement("canvas");
+            imgCtx =imgCanvas.getContext("2d");
+            const width =img.width;
+            const height = img.height;
+            imgCanvas.width= width
+            imgCanvas.height=height;
+            // noinspection JSCheckFunctionSignatures
+            imgCtx.drawImage(img, 0, 0);
+            hasImg = true
+        }
+    }
 }
 
+function getImgUrl(){
+    const search = window.location.search
+    console.log('search', search)
+    const idx = search.indexOf('img')
+     if (idx > 0){
+         console.log(idx)
+         console.log(search.substr(idx+4))
+         return search.substr(idx+4)
+    }
+    return false
+}
 function getText()
 {
     let searchParams = new URLSearchParams(window.location.search)
@@ -950,6 +984,41 @@ function getText()
     }
     return false
 }
+
+
+function drawImg(x, y) {
+    if (!imgCtx){
+        return
+    }
+    const width = imgCanvas.width
+    const height = imgCanvas.height
+    const imgData = imgCtx.getImageData(0, 0, width, height);
+    const gap = 12
+
+    for (let h = 0; h < height; h += gap) {
+        for (let w = 0; w < width; w+=gap){
+            const ptr = (width * h + w) * 4;
+            let count = imgData.data[ptr] + imgData.data[ptr + 1] + imgData.data[ptr + 2];
+            if (count < 123 || count > 456) {
+                continue
+            }
+            let startLive = 600 + Math.random() * 200;
+            const tw = w - width / 2;
+            const th = h - height / 2;
+            let tr = Math.pow(Math.abs(tw), 2 ) + Math.pow(Math.abs(th), 2);
+            tr = Math.sqrt(tr);
+            Star.add(
+                x,
+                y,
+                randomColor(),
+                Math.atan2( tw, th),
+                tr / 20,
+                startLive + Math.random() * startLive
+            );
+        }
+    }
+}
+
 
 function createFireworks(x, y,text="") {
     var hue = Math.random() * 360;
@@ -1795,7 +1864,17 @@ function createBurst(count, particleFactory, startAngle = 0, arcLength = PI_2) {
 
 // Various star effects.
 // These are designed to be attached to a star's `onDeath` event.
+// 自定义特效
 
+function textEffect(){
+    soundManager.playSound("burst")
+    doCreateTextFirework(userEvent.x, userEvent.y)
+};
+
+function imgEffect(){
+    soundManager.playSound("burst")
+    drawImg(userEvent.x, userEvent.y)
+}
 // Crossette breaks star into four same-color pieces which branch in a cross-like shape.
 function crossetteEffect(star) {
     const startAngle = Math.random() * PI_HALF;
@@ -1965,15 +2044,19 @@ class Shell {
 
         // 星星结束爆炸
         let onDeath = comet => this.burst(comet.x, comet.y);
-        const textEffect = () => {
-            soundManager.playSound("burst")
-            doCreateTextFirework(userEvent.x, userEvent.y)
-        };
-        if (userClick){
+        if (userClick && (hasText || hasImg)){
+            const myEffectList = []
+            if (hasImg){
+                myEffectList.push(imgEffect)
+            }
+            if (hasText){
+                myEffectList.push(textEffect)
+            }
+            const myEffect = myEffectList[Math.random() * myEffectList.length | 0]
             if (userClickCount < 3){
-                onDeath = textEffect;
+                onDeath = myEffect;
             }else if (Math.random() > 0.5){
-                onDeath = textEffect;
+                onDeath = myEffect;
             }
         }
         comet.onDeath = onDeath

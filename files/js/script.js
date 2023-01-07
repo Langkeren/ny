@@ -998,19 +998,19 @@ function createFireworks(x, y,text="") {
             p.speed = 3;
 
             setupColors(p);
-
+            let startLive = 600;
+            const tw = w - textWidth / 2;
+            const th = h - textHeight / 2;
+            let tr = Math.pow(Math.abs(tw), 2 ) + Math.pow(Math.abs(th), 2);
+            tr = Math.sqrt(tr);
             // particles.push(p);
-            const comet = Star.addTextStart(
-                p.fx,
-                p.fy,
-                randomColor(),
+            const comet = Star.add(
                 x,
                 y,
-                p.speed,
-                // add minor variation to star life
-                600 + Math.random() * 200,
-                2.5 + Math.random(),
-                2.4 + Math.random()
+                randomColor(),
+                Math.atan2( tw, th),
+                tr / 20,
+                startLive
             );
             if (Math.random() > 0.5){
                 comet.onDeath = onDeath

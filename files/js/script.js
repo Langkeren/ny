@@ -1728,6 +1728,7 @@ function createParticleArc(start, arcLength, count, randomness, particleFactory)
 
 
 /**
+ * 球形爆炸
  * Helper used to create a spherical burst of particles.
  *
  * @param  {Number} count               The desired number of stars/particles. This value is a suggestion, and the
@@ -1746,25 +1747,31 @@ function createBurst(count, particleFactory, startAngle = 0, arcLength = PI_2) {
     // Assuming sphere with surface area of `count`, calculate various
     // properties of said sphere (unit is stars).
     // Radius
+    // 假设球的表面积是count, 那么球的半径如下4PI*R^2=count => R =
     const R = 0.5 * Math.sqrt(count / Math.PI);
-    // Circumference
-    const C = 2 * R * Math.PI;
+    // Circumference周长
+    const C = 2 * R * Math.PI;// = count^2 / Math.Pi
     // Half Circumference
     const C_HALF = C / 2;
 
     // Make a series of rings, sizing them as if they were spaced evenly
     // along the curved surface of a sphere.
+    // 创建半径为0到R之间的一系列内圆
     for (let i = 0; i <= C_HALF; i++) {
+        // 內圆度数, 值域[0,1]
         const ringAngle = i / C_HALF * PI_HALF;
         const ringSize = Math.cos(ringAngle);
+        // 内圆周长[0, C]之间
         const partsPerFullRing = C * ringSize;
+        // 默认内圆周长
         const partsPerArc = partsPerFullRing * (arcLength / PI_2);
-
-        const angleInc = PI_2 / partsPerFullRing;
+        // 角度步长
+        const angleInc = PI_2 / partsPerFullRing; // PI_2 / (C * Match.cos(ringAngle))
+        // 角度偏移量
         const angleOffset = Math.random() * angleInc + startAngle;
         // Each particle needs a bit of randomness to improve appearance.
         const maxRandomAngleOffset = angleInc * 0.33;
-
+        // 內圆度数
         for (let i = 0; i < partsPerArc; i++) {
             const randomAngleOffset = Math.random() * maxRandomAngleOffset;
             let angle = angleInc * i + angleOffset + randomAngleOffset;

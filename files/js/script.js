@@ -1391,7 +1391,7 @@ function handlePointerStart(event) {
 
 var userClick = false;
 var userEvent = false;
-var userClickCount = 1;
+var userClickCount = 0;
 function doCreateTextFirework(x, y){
     const text = getText();
     if (text){

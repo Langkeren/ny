@@ -998,7 +998,7 @@ function createFireworks(x, y,text="") {
             p.speed = 3;
 
             setupColors(p);
-            let startLive = 600;
+            let startLive = 600 + Math.random() * 200;
             const tw = w - textWidth / 2;
             const th = h - textHeight / 2;
             let tr = Math.pow(Math.abs(tw), 2 ) + Math.pow(Math.abs(th), 2);
@@ -1308,12 +1308,22 @@ function handlePointerStart(event) {
 
     if (!isRunning()) return;
 
+    userClick = true
+    userEvent = {x: event.x, y: event.y}
+    userClickCount++
+
     if (updateSpeedFromEvent(event)) {
         isUpdatingSpeed = true;
     } else if (event.onCanvas) {
         launchShellFromConfig(event);
     }
+    userClick = false
+}
 
+var userClick = false;
+var userEvent = false;
+var userClickCount = 1;
+function doCreateTextFirework(x, y){
     const text = getText();
     if (text){
         // alert(text)
@@ -1321,12 +1331,12 @@ function handlePointerStart(event) {
             const arr = text.split(",").filter(s => s && s.trim().length !== 0).map(s => s.trim())
             for (let i = 0; i < arr.length; i++){
                 setTimeout(()=>createFireworks(
-                        randomOffset(event.x, i * 26, i* 36),
-                        randomOffset(event.y, i * 12, i* 38), arr[i]),
+                        randomOffset(x, i * 26, i* 36),
+                        randomOffset(y, i * 12, i* 38), arr[i]),
                     i * 1300 + (i == 0 ? 0.2 :1000 * (Math.random())))
             }
         }else {
-            createFireworks(event.x, event.y, text)
+            createFireworks(x, y, text)
         }
     }
 }
@@ -1954,8 +1964,19 @@ class Shell {
         }
 
         // 星星结束爆炸
-        comet.onDeath = comet => this.burst(comet.x, comet.y);
-
+        let onDeath = comet => this.burst(comet.x, comet.y);
+        const textEffect = () => {
+            soundManager.playSound("burst")
+            doCreateTextFirework(userEvent.x, userEvent.y)
+        };
+        if (userClick){
+            if (userClickCount < 3){
+                onDeath = textEffect;
+            }else if (Math.random() > 0.5){
+                onDeath = textEffect;
+            }
+        }
+        comet.onDeath = onDeath
         // createFireworks(comet.x, burstY, "我爱你", (x, y)=> this.burst(x, y))
         // 发射声音
         soundManager.playSound('lift');

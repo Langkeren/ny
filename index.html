@@ -259,10 +259,14 @@
         var diff2Seconds = Math.floor((diff2 - (diff2Years * 365 + diff2Days) * days - diff2Hours * hours - diff2Minutes *
             minutes) / seconds)
         if(todayMonth==1){
-            if(todayDate==22){document.getElementById("text1").innerHTML =  "现在是1月22号,祝你"+todayYear+"农历新年快乐！"}
-            else{document.getElementById("text1").innerHTML =  "提前祝你新年快乐"}
+            if(todayDate<25){document.getElementById("text1").innerHTML =  "现在是1月"+todayDate+"号,祝你"+todayYear+"农历新年快乐！"}
+            else if(todayDate<22){
+                $((textDone ? '': '#text') + ' .time').text(  diffDays + "天" + diffHours + "小时" + diffMinutes + "分钟" + diffSeconds + "秒"+ todayYear + "农历新年")
+                document.getElementById("text1").innerHTML =  "提前祝你新年快乐";
+            }
+        }else{
+            document.getElementById("text").innerHTML =  "新的一年做大做强!"
         }
-        $((textDone ? '': '#text') + ' .time').text(  diffDays + "天" + diffHours + "小时" + diffMinutes + "分钟" + diffSeconds + "秒"+ todayYear + "农历新年")
     }
     time()
 </script>
